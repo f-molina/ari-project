@@ -20,7 +20,7 @@ export const writeXmlFile = (data) => {
     const stringified = JSON.stringify(dataToConvert);
     const xml = parser.toXml(stringified);
     
-    fs.writeFileSync('files/newClients.xml', xml);
+    fs.writeFileSync('public/newClients.xml', xml);
   } 
   catch (error) 
   {

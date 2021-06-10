@@ -1,15 +1,31 @@
-import { useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import axios from 'axios'
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
+import ReactJson from 'react-json-view'
 
 export default function Home() {
-  useEffect(() => {
-    axios.post('/api/text-to-xml')
+  const [fileToProcess, setFileToProcess] = useState(null)
+  const [jsonToShow, setJsonToShow] = useState(null)
+
+  const handleUpload = (e) => {
+    console.log(e.target.files[0]);
+    setFileToProcess(e.target.files[0]);
+    };
+
+  const onSubmit = (e) => {
+    e.preventDefault()
+    console.log("hola")
+
+    let upload =  new FormData();
+    upload.append("file", fileToProcess);
+
+    axios.post('/api/text-to-xml', upload)
       .then(({data}) => {
         console.log(data)
+        setJsonToShow(data.clients || null)
       })
-  }, [])
+  }
 
   return (
     <div className={styles.container}>
@@ -23,6 +39,13 @@ export default function Home() {
         <h1 className={styles.title}>
           Proyecto ARI
         </h1>
+
+        <form onSubmit={onSubmit} autoComplete="off">
+          <input type='file' onChange={handleUpload}/>
+          <input type='submit' value="Enviar" />
+        </form>
+
+        {jsonToShow && <ReactJson src={jsonToShow} theme="monokai" />}
       </main>
     </div>
   )
