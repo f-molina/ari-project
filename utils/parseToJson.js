@@ -1,3 +1,5 @@
+import { encryptText } from "./vigenereCipher";
+
 export const parseClientDataToJSON = (data, delimiter) => {
   const clients = data.split('\n')
   const clientsInfo = []
@@ -9,7 +11,7 @@ export const parseClientDataToJSON = (data, delimiter) => {
       documento: clientInfo[0],
       "primer-nombre": clientInfo[1],
       apellido: clientInfo[2],
-      "credit-card": clientInfo[3],
+      "credit-card": encryptText(clientInfo[3], 'prueba'),
       tipo: clientInfo[4],
       telefono: clientInfo[5]
     })
