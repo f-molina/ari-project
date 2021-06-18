@@ -10,22 +10,41 @@ export default function Home() {
   const [delimiter, setDelimiter] = useState('')
   const [key, setKey] = useState('')
   const [jsonToShow, setJsonToShow] = useState(null)
+  const [error, setError] = useState(null)
 
   const handleUpload = e => {
     console.log(e.target.files[0])
     setFileToProcess(e.target.files[0])
   }
 
-  const onSubmit = e => {
+  const onParseToXML = e => {
     e.preventDefault()
     let upload = new FormData()
     upload.append('file', fileToProcess)
     upload.append('delimiter', delimiter)
     upload.append('key', key)
 
-    axios.post('/api/text-to-xml', upload).then(({data}) => {
-      setJsonToShow(data.clients || null)
+    axios.post('/api/text-to-xml', upload)
+      .then(({data}) => {
+        if(!data.success) return setError(data.error)
+        setJsonToShow(data.clients || null)
+        setError(null)
     })
+  }
+
+  const onParseToTXT = e => {
+    e.preventDefault()
+
+    let upload = new FormData()
+    upload.append('file', fileToProcess)
+    upload.append('delimiter', delimiter)
+    upload.append('key', key)
+
+    axios.post('/api/xml-to-text', upload)
+    .then(({data}) => {
+      if(!data.success) return setError(data.error)
+      console.log(data.text)
+  })
   }
 
   const cleanForm = () => {
@@ -49,18 +68,27 @@ export default function Home() {
       <main className="container">
         <h1 className={styles.title}>Proyecto ARI</h1>
 
-        <div className="row">
+        <div className="row mt-2">
+          <div className="col-12">
+            {error && (
+              <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {error}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" onClick={() => setError(null)}></button>
+              </div>
+            )}
+          </div>
+          
           <div className="col-6">
             <div className="card">
               <div className="card-body">
                 <h5 className="card-title">Entradas</h5>
-                <form onSubmit={onSubmit} autoComplete="off">
-                  <label for="key" className="form-label mb-0 fw-bold">Archivo de entrada (.txt, .xml)</label>
+                <form onSubmit={onParseToXML} autoComplete="off">
+                  <label htmlFor="key" className="form-label mb-0 fw-bold">Archivo de entrada (.txt, .xml)</label>
                   <input className="form-control" type="file" onChange={handleUpload} />
 
                   <div className="row my-1">
                     <div className="col">
-                      <label for="delimiter" className="form-label mb-0 fw-bold">Delimitador</label>
+                      <label htmlFor="delimiter" className="form-label mb-0 fw-bold">Delimitador</label>
                       <input
                         id="delimiter"
                         type="text"
@@ -71,7 +99,7 @@ export default function Home() {
                       />
                     </div>
                     <div className="col">
-                      <label for="key" className="form-label mb-0 fw-bold">Clave de cifrado</label>
+                      <label htmlFor="key" className="form-label mb-0 fw-bold">Clave de cifrado</label>
                       <input
                         id="key"
                         type="text"
@@ -85,8 +113,8 @@ export default function Home() {
                   </div>
 
                   <div className="d-flex justify-content-evenly mt-2">
-                    <button className="btn btn-primary" onClick={onSubmit}>Generar XML y JSON</button>
-                    <button className="btn btn-primary" onClick={onSubmit}>Generar TXT</button>
+                    <button className="btn btn-primary" onClick={onParseToXML}>Generar XML y JSON</button>
+                    <button className="btn btn-primary" onClick={onParseToTXT}>Generar TXT</button>
                     <button className="btn btn-secondary" onClick={cleanForm}>Limpiar</button>
                   </div>
                   
@@ -97,6 +125,7 @@ export default function Home() {
           <div className="col-6">
             <div className="card">
               <div className="card-body">
+                <h5 className="card-title">Salida</h5>
                 {jsonToShow && <JsonViewer jsonToShow={jsonToShow} />}
               </div>
             </div>
