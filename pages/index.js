@@ -3,6 +3,7 @@ import dynamic from 'next/dynamic'
 import Head from 'next/head'
 import axios from 'axios'
 import styles from '../styles/Home.module.css'
+import TextViewer from 'components/TextViewer'
 const JsonViewer = dynamic(() => import('components/JsonViewer'), {ssr: false})
 
 export default function Home() {
@@ -10,6 +11,7 @@ export default function Home() {
   const [delimiter, setDelimiter] = useState('')
   const [key, setKey] = useState('')
   const [jsonToShow, setJsonToShow] = useState(null)
+  const [textToShow, setTextToShow] = useState(null)
   const [error, setError] = useState(null)
 
   const handleUpload = e => {
@@ -29,6 +31,7 @@ export default function Home() {
         if(!data.success) return setError(data.error)
         setJsonToShow(data.clients || null)
         setError(null)
+        setTextToShow(null)
     })
   }
 
@@ -43,13 +46,18 @@ export default function Home() {
     axios.post('/api/xml-to-text', upload)
     .then(({data}) => {
       if(!data.success) return setError(data.error)
-      console.log(data.text)
+
+      setTextToShow(data.text)
+      setError(null)
+      setJsonToShow(null)
   })
   }
 
   const cleanForm = () => {
     setJsonToShow(null)
+    setTextToShow(null)
     setFileToProcess(null)
+    setError(null)
     setKey('')
     setDelimiter('')
   }
@@ -127,6 +135,7 @@ export default function Home() {
               <div className="card-body">
                 <h5 className="card-title">Salida</h5>
                 {jsonToShow && <JsonViewer jsonToShow={jsonToShow} />}
+                {textToShow && <TextViewer body={textToShow} />}
               </div>
             </div>
           </div>

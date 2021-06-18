@@ -1,2 +1,2 @@
-09991034-7,Jaime,Climaco,asld asde dasd dfki,GOLD,22507878
-09991034-1,Juan,Perez,asld asde dasd dfki,SILVER,23548565
+09991034-7,Jaime,Climaco,mi tarjeta de credito,GOLD,22507878
+09991034-1,Juan,Perez,mi tarjeta de debito,SILVER,23548565

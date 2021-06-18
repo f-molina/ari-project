@@ -18,3 +18,13 @@ a {
 label {
   font-size: 13px;
 }
+
+pre code {
+  display: block;
+  background: none;
+  white-space: pre;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+  min-width: 100px;
+  padding: 0;
+}
