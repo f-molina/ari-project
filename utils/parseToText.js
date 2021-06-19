@@ -21,3 +21,25 @@ export const parseJsonToText = (clients, delimiter, key) => {
 
   return text
 }
+
+
+export const parseToText = (clients, delimiter, key) => {
+  let text = ''
+
+  clients.forEach(client => {
+
+    client = {
+      ...client,
+      'credit-card': VigenereCipher.decrypt(client['credit-card'], key)
+    }
+
+    Object.values(client).forEach((value, index, self) => {
+      text += `${value}${index < self.length - 1 ? delimiter: ''}` 
+    });
+
+    text += '\n'
+  });
+
+  return text
+}
+
