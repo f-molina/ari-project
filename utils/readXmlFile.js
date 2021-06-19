@@ -10,7 +10,8 @@ export const readXmlFile = (file) => {
     trim: true,
   }));
 
-  console.log(json.clientes.cliente)
-
-  return json.clientes.cliente
+  return {
+    json: json.clientes.cliente,
+    xml: data
+  }
 }

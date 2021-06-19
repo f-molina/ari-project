@@ -1,4 +1,3 @@
-import fs from "fs";
 import formidable from "formidable";
 import { parseJsonToText } from 'utils/parseToText';
 import { readXmlFile } from 'utils/readXmlFile';
@@ -42,8 +41,8 @@ const post = async (req, res) => {
         res.status(200).json({success: false, error: `El campo ${field} es requerido`})  
       }
 
-      const text = parseAndSaveTxt(files.file, fileName, fields);
-      res.status(200).json({success: true, text, fileName: `${fileName}.txt` })
+      const{ text, xml } = parseAndSaveTxt(files.file, fileName, fields);
+      res.status(200).json({success: true, text, xml, fileName: `${fileName}.txt` })
     });   
   }
   catch (error) 
@@ -53,9 +52,9 @@ const post = async (req, res) => {
 };
 
 const parseAndSaveTxt = (file, fileName, fields) => {
-  const data = readXmlFile(file.path)
-  const text = parseJsonToText(data, fields.delimiter, fields.key)
+  const { xml, json } = readXmlFile(file.path)
+  const text = parseJsonToText(json, fields.delimiter, fields.key)
   writeTxtFile(text, fileName)
-  return  text
+  return { text, xml }
 }
 

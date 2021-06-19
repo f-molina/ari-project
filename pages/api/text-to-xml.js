@@ -41,8 +41,8 @@ const post = async (req, res) => {
         res.status(200).json({success: false, error: `El campo ${field} es requerido`})  
       }
       
-      const clients = await parseAndSaveXML(files.file, fileName, fields);
-      res.status(200).json({success: true, clients, fileName: `${fileName}.xml`})
+      const {clients, data} = await parseAndSaveXML(files.file, fileName, fields);
+      res.status(200).json({success: true, clients, txt: data, fileName: `${fileName}.xml`})
     });   
   }
   catch (error) 
@@ -55,6 +55,6 @@ const parseAndSaveXML = async (file, fileName, fields) => {
   const data = fs.readFileSync(file.path, 'utf8');
   const clients =  parseClientDataToJSON(data, fields.delimiter, fields.key)
   writeXmlFile(clients, fileName)  
-  return clients;
+  return {clients , data};
 };
 
