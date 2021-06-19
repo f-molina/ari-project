@@ -1,7 +1,7 @@
 const fs = require('fs')
 const parser = require('xml2json')
 
-export const writeXmlFile = (data) => {
+export const writeXmlFile = (data, fileName) => {
   try 
   {
     const dataToConvert = {
@@ -20,7 +20,7 @@ export const writeXmlFile = (data) => {
     const stringified = JSON.stringify(dataToConvert);
     const xml = parser.toXml(stringified);
     
-    fs.writeFileSync('public/newClients.xml', xml);
+    fs.writeFileSync(`public/${fileName}.xml`, xml);
   } 
   catch (error) 
   {

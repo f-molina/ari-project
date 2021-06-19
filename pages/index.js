@@ -10,6 +10,7 @@ export default function Home() {
   const [fileToProcess, setFileToProcess] = useState(null)
   const [delimiter, setDelimiter] = useState('')
   const [key, setKey] = useState('')
+  const [fileName, setFileName] = useState(null)
   const [jsonToShow, setJsonToShow] = useState(null)
   const [textToShow, setTextToShow] = useState(null)
   const [error, setError] = useState(null)
@@ -29,6 +30,7 @@ export default function Home() {
     axios.post('/api/text-to-xml', upload)
       .then(({data}) => {
         if(!data.success) return setError(data.error)
+        setFileName(data.fileName)
         setJsonToShow(data.clients || null)
         setError(null)
         setTextToShow(null)
@@ -46,17 +48,19 @@ export default function Home() {
     axios.post('/api/xml-to-text', upload)
     .then(({data}) => {
       if(!data.success) return setError(data.error)
-
+      setFileName(data.fileName)
       setTextToShow(data.text)
       setError(null)
       setJsonToShow(null)
   })
   }
 
-  const cleanForm = () => {
+  const cleanForm = (e) => {
+    e.preventDefault()
     setJsonToShow(null)
     setTextToShow(null)
     setFileToProcess(null)
+    setFileName(null)
     setError(null)
     setKey('')
     setDelimiter('')
@@ -90,7 +94,7 @@ export default function Home() {
             <div className="card">
               <div className="card-body">
                 <h5 className="card-title">Entradas</h5>
-                <form onSubmit={onParseToXML} autoComplete="off">
+                <form autoComplete="off">
                   <label htmlFor="key" className="form-label mb-0 fw-bold">Archivo de entrada (.txt, .xml)</label>
                   <input className="form-control" type="file" onChange={handleUpload} />
 
@@ -134,6 +138,9 @@ export default function Home() {
             <div className="card">
               <div className="card-body">
                 <h5 className="card-title">Salida</h5>
+                {fileName && (
+                  <p>Archivo de salida: <a download href={`/${fileName}`}><b>{fileName}</b></a></p>
+                )}
                 {jsonToShow && <JsonViewer jsonToShow={jsonToShow} />}
                 {textToShow && <TextViewer body={textToShow} />}
               </div>

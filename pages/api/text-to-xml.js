@@ -24,16 +24,25 @@ const post = async (req, res) => {
     const form = new formidable.IncomingForm();
     form.parse(req, async function (error, fields, files) 
     {
+      if(error) throw new Error(error)
+
+      const path = files?.file?.name?.split('.')
+      const ext = path.pop() || ''
+      const fileName = path.shift() || 'temp01'
+      
+      if(ext !== 'txt')
+      {
+        res.status(200).json({success: false, error: `El archivo debe ser un .txt`})  
+      }
+
       if(empty(fields.delimiter) || empty(fields.key))
       {
         const field = empty(fields.delimiter) ? 'delimitador' : 'clave de cifrado'
         res.status(200).json({success: false, error: `El campo ${field} es requerido`})  
       }
       
-      if(error) throw new Error(error)
-
-      const clients = await parseAndSaveXML(files.file, fields);
-      res.status(200).json({success: true, clients})
+      const clients = await parseAndSaveXML(files.file, fileName, fields);
+      res.status(200).json({success: true, clients, fileName: `${fileName}.xml`})
     });   
   }
   catch (error) 
@@ -42,10 +51,10 @@ const post = async (req, res) => {
   }
 };
 
-const parseAndSaveXML = async (file, fields) => {
+const parseAndSaveXML = async (file, fileName, fields) => {
   const data = fs.readFileSync(file.path, 'utf8');
   const clients =  parseClientDataToJSON(data, fields.delimiter, fields.key)
-  writeXmlFile(clients)  
+  writeXmlFile(clients, fileName)  
   return clients;
 };
 

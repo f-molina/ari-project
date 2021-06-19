@@ -3,6 +3,7 @@ import formidable from "formidable";
 import { parseJsonToText } from 'utils/parseToText';
 import { readXmlFile } from 'utils/readXmlFile';
 import { empty } from "utils/helpers";
+import { writeTxtFile } from "utils/writeTxtFile";
 
 export const config = {
   api: {
@@ -24,16 +25,25 @@ const post = async (req, res) => {
     const form = new formidable.IncomingForm();
     form.parse(req, async function (error, fields, files) 
     {
+      if(error) throw new Error(error)
+      
+      const path = files?.file?.name?.split('.')
+      const ext = path.pop() || ''
+      const fileName = path.shift() || 'temp01'
+      
+      if(ext !== 'xml')
+      {
+        res.status(200).json({success: false, error: `El archivo debe ser un .xml`})  
+      }
+
       if(empty(fields.delimiter) || empty(fields.key))
       {
         const field = empty(fields.delimiter) ? 'delimitador' : 'clave de cifrado'
         res.status(200).json({success: false, error: `El campo ${field} es requerido`})  
       }
-      
-      if(error) throw new Error(error)
 
-      const text = parseAndSaveTxt(files.file, fields);
-      res.status(200).json({success: true, text})
+      const text = parseAndSaveTxt(files.file, fileName, fields);
+      res.status(200).json({success: true, text, fileName: `${fileName}.txt` })
     });   
   }
   catch (error) 
@@ -42,8 +52,10 @@ const post = async (req, res) => {
   }
 };
 
-const parseAndSaveTxt = (file, fields) => {
+const parseAndSaveTxt = (file, fileName, fields) => {
   const data = readXmlFile(file.path)
-  return parseJsonToText(data, fields.delimiter, fields.key) 
+  const text = parseJsonToText(data, fields.delimiter, fields.key)
+  writeTxtFile(text, fileName)
+  return  text
 }
 
