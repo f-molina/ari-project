@@ -90,7 +90,7 @@ export default function Home() {
             )}
           </div>
           
-          <div className="col-6">
+          <div className="col-md-6">
             <div className="card">
               <div className="card-body">
                 <h5 className="card-title">Entradas</h5>
@@ -134,7 +134,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <div className="col-6">
+          <div className="col-md-6 mt-4 mt-md-0">
             <div className="card">
               <div className="card-body">
                 <h5 className="card-title">Salida</h5>
