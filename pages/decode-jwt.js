@@ -1,4 +1,5 @@
-import {useState, useEffect} from 'react'
+import {useState} from 'react'
+import dynamic from 'next/dynamic'
 import Link from "next/link"
 import Head from 'next/head'
 import axios from 'axios'
