@@ -2,7 +2,7 @@ import {useState, useEffect} from 'react'
 import Link from "next/link"
 import Head from 'next/head'
 import axios from 'axios'
-import JsonViewer from 'components/JsonViewer'
+const JsonViewer = dynamic(() => import('components/JsonViewer'), {ssr: false})
 
 const DecodeJWT = () => {
   const [jwt, setJwt] = useState('')
