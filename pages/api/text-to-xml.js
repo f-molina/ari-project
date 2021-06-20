@@ -4,6 +4,8 @@ import { parseClientDataToJSON } from 'utils/parseToJson';
 import { writeXmlFile } from 'utils/writeXmlFile';
 import { empty } from "utils/helpers";
 
+const jwt = require('jsonwebtoken');
+
 export const config = {
   api: {
     bodyParser: false
@@ -42,7 +44,15 @@ const post = async (req, res) => {
       }
       
       const {clients, data} = await parseAndSaveXML(files.file, fileName, fields);
-      res.status(200).json({success: true, clients, txt: data, fileName: `${fileName}.xml`})
+      const token = jwt.sign({clientes: clients}, 'prueba');
+      
+      res.status(200).json({ 
+        success: true, 
+        clients: {clientes: clients}, 
+        txt: data,
+        token, 
+        fileName: `${fileName}.xml`
+      })
     });   
   }
   catch (error) 

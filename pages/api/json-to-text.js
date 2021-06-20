@@ -56,6 +56,6 @@ const parseAndSaveTxt = (file, fileName, fields) => {
   const clients = JSON.parse(json)
   const text = parseToText(clients.clientes || [], fields.delimiter, fields.key)
   writeTxtFile(text, fileName)
-  return { text, json }
+  return { text, json: clients.clientes || [] }
 }
 

@@ -1,5 +1,6 @@
-import {useState, useEffect} from 'react'
+import {useState} from 'react'
 import dynamic from 'next/dynamic'
+import Link from "next/link"
 import Head from 'next/head'
 import axios from 'axios'
 import styles from '../styles/Home.module.css'
@@ -14,14 +15,15 @@ export default function Home() {
   const [fileName, setFileName] = useState(null)
   const [jsonToShow, setJsonToShow] = useState(null)
   const [textToShow, setTextToShow] = useState(null)
+  const [jwtToShow, setJwtToShow] = useState(null)
 
   const [inputXml, setInputXml] = useState(null)
   const [inputTxt, setInputTxt] = useState(null)
+  const [inputJson, setInputJson] = useState(null)
   
   const [error, setError] = useState(null)
 
   const handleUpload = e => {
-    console.log(e.target.files[0])
     setFileToProcess(e.target.files[0])
   }
 
@@ -38,6 +40,7 @@ export default function Home() {
         setFileName(data.fileName)
         setJsonToShow(data.clients || null)
         setInputTxt(data.txt)
+        setJwtToShow(data.token)
         setError(null)
         setTextToShow(null)
         setInputXml(null)
@@ -61,6 +64,7 @@ export default function Home() {
       setError(null)
       setJsonToShow(null)
       setInputTxt(null)
+      setJwtToShow(null)
     })
   }
 
@@ -77,10 +81,11 @@ export default function Home() {
       if(!data.success) return setError(data.error)
       setFileName(data.fileName)
       setTextToShow(data.text)
-      setInputXml(data.xml)
+      setInputJson(data.json)
       setError(null)
       setJsonToShow(null)
       setInputTxt(null)
+      setJwtToShow(null)
     })
   }
 
@@ -92,6 +97,8 @@ export default function Home() {
     setFileName(null)
     setInputXml(null)
     setInputTxt(null)
+    setInputJson(null)
+    setJwtToShow(null)
     setError(null)
     setKey('')
     setDelimiter('')
@@ -179,7 +186,18 @@ export default function Home() {
                     <TextViewer body={inputTxt} />
                   </>
                 )}
+
+                {inputJson && (
+                  <>
+                   <p className='fw-bold mb-0 mt-4'>Archivo de entrada:</p>
+                    <JsonViewer jsonToShow={inputJson} />
+                  </>
+                )}
               </div>
+            </div>
+             
+            <div className='d-flex justify-content-center mt-4'>
+              <Link href="/decode-jwt"><a>Decodificar JWT</a></Link>
             </div>
           </div>
           <div className="col-md-6 mt-4 mt-md-0">
@@ -192,6 +210,15 @@ export default function Home() {
                 <p className='fw-bold mb-0'>Resultados:</p>
                 {jsonToShow && <JsonViewer jsonToShow={jsonToShow} />}
                 {textToShow && <TextViewer body={textToShow} />}
+                {jwtToShow && (
+                  <>
+                    <p className='fw-bold mb-0 mt-4'>JWT generado:</p>
+                    <div className='card p-3'>
+                      <p className='code'>{jwtToShow}</p>
+                    </div>
+                    
+                  </>
+                )}
               </div>
             </div>
           </div>
